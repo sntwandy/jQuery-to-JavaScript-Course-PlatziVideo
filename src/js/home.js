@@ -36,3 +36,26 @@ Promise.all([getUsers, getAllUsers]).then(function(message){
 }).catch(function(message){
   console.log(message)
 })*/
+
+// Petitions
+
+// With jQuery
+$.ajax('https://randomuser.me/api/', {
+  method: 'GET',
+  success: function(data){
+    console.log(data)
+  },
+  error: function(error){
+    console.log(error)
+  }
+})
+
+// With JavaScript Vanilla
+fetch('https://randomuser.me/api/').then(function(response){
+  //console.log(response)
+  return response.json()
+}).then(function(user){
+  console.log('User', user.results[0].name.first, user.results[0].name.last)
+}).catch(function(){
+  console.log('Something is wrong')
+})
