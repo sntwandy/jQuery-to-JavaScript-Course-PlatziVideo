@@ -58,4 +58,22 @@ fetch('https://randomuser.me/api/').then(function(response){
   console.log('User', user.results[0].name.first, user.results[0].name.last)
 }).catch(function(){
   console.log('Something is wrong')
-})
+});
+
+
+// Asyncronus functions with async await petitions to API
+(async function load(){
+  //await
+  async function getData(url){
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  }
+  const actionList = await getData('https://yts.mx/api/v2/list_movies.json?genre=action');
+  const dramaList = await getData('https://yts.mx/api/v2/list_movies.json?genre=drama');
+  const animationList = await getData('https://yts.mx/api/v2/list_movies.json?genre=animation');
+  
+  console.log('Action List:' ,actionList);
+  console.log('Drama List:', dramaList);
+  console.log('Animation List:', animationList);
+})()
