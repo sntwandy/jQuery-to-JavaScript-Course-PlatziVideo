@@ -73,11 +73,6 @@ fetch('https://randomuser.me/api/').then(function(response){
   const dramaList = await getData('https://yts.mx/api/v2/list_movies.json?genre=drama');
   const animationList = await getData('https://yts.mx/api/v2/list_movies.json?genre=animation');
 
-  actionList.data.movies.forEach((item) =>{
-    const HTMLString = videoItemTemplate(item);
-    console.log(HTMLString)
-  })
-
   const $animationContainer = document.getElementById('animation');
   const $actionContainer = document.getElementById('action');
   const $dramaContainer = document.getElementById('drama');
@@ -93,17 +88,39 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $modalImg = $modal.querySelector('img');
   const $modalDescription = $modal.querySelector('p');
 
-  // Templates in JS.
+    // Templates in JS.
 function videoItemTemplate(item){
   return (
     `<div class="primaryPlaylistItem">
-  <div class="primaryPlaylistItem-image">
-    <img src="${item.medium_cover_image}" />
-  </div>
-  <h4 class="primaryPlaylistItem-title">${item.title}</h4>
-</div>`
+      <div class="primaryPlaylistItem-image">
+        <img src="${item.medium_cover_image}" />
+      </div>
+        <h4 class="primaryPlaylistItem-title">${item.title}</h4>
+    </div>`
   )
 }
+
+function createTemplate(HTMLString){
+  const html = document.implementation.createHTMLDocument();
+  html.body.innerHTML = HTMLString;
+  return html.body.children[0];
+}
+
+function renderMovieList(list, $container){
+    $container.children[0].remove();
+    list.forEach((item) =>{
+    const HTMLString = videoItemTemplate(item);
+    $container.append(createTemplate(HTMLString));
+    //console.log(HTMLString)
+  })
+}
+
+const kindList = (kList) => kList = kList.data.movies;
+
+renderMovieList(kindList(actionList), $actionContainer);
+renderMovieList(kindList(dramaList), $dramaContainer);
+renderMovieList(kindList(animationList), $animationContainer);
+
 
   // console.log(videoItemTemplate('src/images/covers/bitcoin.jpg', 'Bitcoin'));
   /*
