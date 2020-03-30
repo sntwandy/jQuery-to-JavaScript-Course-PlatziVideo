@@ -72,7 +72,12 @@ fetch('https://randomuser.me/api/').then(function(response){
   const actionList = await getData('https://yts.mx/api/v2/list_movies.json?genre=action');
   const dramaList = await getData('https://yts.mx/api/v2/list_movies.json?genre=drama');
   const animationList = await getData('https://yts.mx/api/v2/list_movies.json?genre=animation');
-  
+
+  actionList.data.movies.forEach((item) =>{
+    const HTMLString = videoItemTemplate(item);
+    console.log(HTMLString)
+  })
+
   const $animationContainer = document.getElementById('animation');
   const $actionContainer = document.getElementById('action');
   const $dramaContainer = document.getElementById('drama');
@@ -87,6 +92,20 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $modalTitle = $modal.querySelector('h1');
   const $modalImg = $modal.querySelector('img');
   const $modalDescription = $modal.querySelector('p');
+
+  // Templates in JS.
+function videoItemTemplate(item){
+  return (
+    `<div class="primaryPlaylistItem">
+  <div class="primaryPlaylistItem-image">
+    <img src="${item.medium_cover_image}" />
+  </div>
+  <h4 class="primaryPlaylistItem-title">${item.title}</h4>
+</div>`
+  )
+}
+
+  // console.log(videoItemTemplate('src/images/covers/bitcoin.jpg', 'Bitcoin'));
   /*
   console.log('Action List:' ,actionList);
   console.log('Drama List:', dramaList);
