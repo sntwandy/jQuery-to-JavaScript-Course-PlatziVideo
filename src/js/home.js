@@ -82,6 +82,9 @@ fetch('https://randomuser.me/api/').then(function(response){
 
   const $featuringContainer = document.getElementById('feauting');
   const $form = document.getElementById('form');
+  $form.addEventListener('submit', (event) => {
+    event.preventDefault();
+  });
   const $home = document.getElementById('home');
 
   const $modalTitle = $modal.querySelector('h1');
@@ -106,11 +109,17 @@ function createTemplate(HTMLString){
   return html.body.children[0];
 }
 
+function addEventClick($element){
+  $element.addEventListener('click', () => alert('click'));
+}
+
 function renderMovieList(list, $container){
     $container.children[0].remove();
     list.forEach((item) =>{
     const HTMLString = videoItemTemplate(item);
-    $container.append(createTemplate(HTMLString));
+    const movieElement = createTemplate(HTMLString); 
+    $container.append(movieElement);
+    addEventClick(movieElement);
     //console.log(HTMLString)
   })
 }
