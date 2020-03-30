@@ -73,7 +73,22 @@ fetch('https://randomuser.me/api/').then(function(response){
   const dramaList = await getData('https://yts.mx/api/v2/list_movies.json?genre=drama');
   const animationList = await getData('https://yts.mx/api/v2/list_movies.json?genre=animation');
   
+  const $animationContainer = document.getElementById('animation');
+  const $actionContainer = document.getElementById('action');
+  const $dramaContainer = document.getElementById('drama');
+  const $modal = document.getElementById('modal');
+  const $overlay = document.getElementById('overlay');
+  const $hideModal = document.getElementById('hide-modal');
+
+  const $featuringContainer = document.getElementById('feauting');
+  const $form = document.getElementById('form');
+  const $home = document.getElementById('home');
+
+  const $modalTitle = $modal.querySelector('h1');
+  const $modalImg = $modal.querySelector('img');
+  const $modalDescription = $modal.querySelector('p');
+  /*
   console.log('Action List:' ,actionList);
   console.log('Drama List:', dramaList);
-  console.log('Animation List:', animationList);
+  console.log('Animation List:', animationList);*/
 })()
