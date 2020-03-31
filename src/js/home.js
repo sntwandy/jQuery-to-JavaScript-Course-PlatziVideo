@@ -82,10 +82,12 @@ fetch('https://randomuser.me/api/').then(function(response){
 
   const $featuringContainer = document.getElementById('feauting');
   const $form = document.getElementById('form');
+  const $home = document.getElementById('home');
+
   $form.addEventListener('submit', (event) => {
     event.preventDefault();
+    $home.classList.add('search-active');
   });
-  const $home = document.getElementById('home');
 
   const $modalTitle = $modal.querySelector('h1');
   const $modalImg = $modal.querySelector('img');
@@ -110,7 +112,7 @@ function createTemplate(HTMLString){
 }
 
 function addEventClick($element){
-  $element.addEventListener('click', () => alert('click'));
+  $element.addEventListener('click', () => showModal());
 }
 
 function renderMovieList(list, $container){
@@ -123,6 +125,16 @@ function renderMovieList(list, $container){
     //console.log(HTMLString)
   })
 }
+
+function showModal(){
+  $overlay.classList.add('active');
+  $modal.style.animation = 'modalIn .8s forwards';
+}
+
+$hideModal.addEventListener('click', () => {
+  $overlay.classList.remove('active');
+  $modal.style.animation = 'modalOut .8s forwards';
+})
 
 const kindList = (kList) => kList = kList.data.movies;
 
