@@ -67,7 +67,10 @@ fetch('https://randomuser.me/api/').then(function(response){
   async function getData(url){
     const response = await fetch(url);
     const data = await response.json();
-    return data;
+    if(data.data.movie_count > 0){
+      return data;
+    }
+    throw new Error('No encontro ningun resultado');
   }
   const BASE_API = 'https://yts.mx/api/v2/';
 
@@ -165,13 +168,19 @@ fetch('https://randomuser.me/api/').then(function(response){
 // Making a Petition to API to search a movie
     const data = new FormData($form);
     // destructuring assignment
-    const {
-      data:{
-        movies: movieData
-      }
-    } = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`);
-    const HTMLString = featuringTemplate(movieData[0]);
-    $featuringContainer.innerHTML = HTMLString;
+    try{
+      const {
+        data:{
+          movies: movieData
+        }
+      } = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`);
+      const HTMLString = featuringTemplate(movieData[0]);
+      $featuringContainer.innerHTML = HTMLString;
+    } catch(error){
+      alert(error.message);
+      $loader.remove();
+      $home.classList.remove('search-active');
+    }
   });
 
   const $modalTitle = $modal.querySelector('h1');
