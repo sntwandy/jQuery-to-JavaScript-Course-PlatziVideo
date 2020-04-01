@@ -71,9 +71,9 @@ fetch('https://randomuser.me/api/').then(function(response){
   }
   const BASE_API = 'https://yts.mx/api/v2/';
 
-  const actionList = await getData(`${BASE_API}list_movies.json?genre=action`);
-  const dramaList = await getData(`${BASE_API}list_movies.json?genre=drama`);
-  const animationList = await getData(`${BASE_API}list_movies.json?genre=animation`);
+  const {data:{movies: actionList}} = await getData(`${BASE_API}list_movies.json?genre=action`);
+  const {data:{movies: dramaList}} = await getData(`${BASE_API}list_movies.json?genre=drama`);
+  const {data:{movies: animationList}} = await getData(`${BASE_API}list_movies.json?genre=animation`);
 
   const $animationContainer = document.getElementById('animation');
   const $actionContainer = document.getElementById('action');
@@ -169,11 +169,34 @@ function renderMovieList(list, $container, category){
   })
 }
 
+function findById(list, id){
+  return list.find( item => item.id === parseInt(id, 10));
+}
+
+function findMovie(id, category){
+  switch(category){
+    case 'action': return findById(actionList, id);
+      break;
+    case 'drama': return findById(dramaList, id);
+      break;
+    case 'animation': return findById(animationList, id);
+      break;
+    default: alert('Error 404 Not found, try again. :(');      
+  }
+}
+
 function showModal($element){
   $overlay.classList.add('active');
   $modal.style.animation = 'modalIn .8s forwards';
+
+  // getting the id and category to the element from the DOM with dataset
   const id = $element.dataset.id;
   const category = $element.dataset.category;
+  const movieData = findMovie(id, category);
+  // Writting the content to the DOM.
+  $modalTitle.textContent = movieData.title;
+  $modalImg.setAttribute('src', movieData.medium_cover_image);
+  $modalDescription.textContent = movieData.description_full;
 }
 
 $hideModal.addEventListener('click', () => {
@@ -181,11 +204,10 @@ $hideModal.addEventListener('click', () => {
   $modal.style.animation = 'modalOut .8s forwards';
 })
 
-const kindList = (kList) => kList = kList.data.movies;
 
-renderMovieList(kindList(actionList), $actionContainer, 'action');
-renderMovieList(kindList(dramaList), $dramaContainer, 'drama');
-renderMovieList(kindList(animationList), $animationContainer, 'animation');
+renderMovieList(actionList, $actionContainer, 'action');
+renderMovieList(dramaList, $dramaContainer, 'drama');
+renderMovieList(animationList, $animationContainer, 'animation');
 
 
   // console.log(videoItemTemplate('src/images/covers/bitcoin.jpg', 'Bitcoin'));
