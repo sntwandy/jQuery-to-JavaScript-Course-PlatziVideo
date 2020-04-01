@@ -71,10 +71,6 @@ fetch('https://randomuser.me/api/').then(function(response){
   }
   const BASE_API = 'https://yts.mx/api/v2/';
 
-  const {data:{movies: actionList}} = await getData(`${BASE_API}list_movies.json?genre=action`);
-  const {data:{movies: dramaList}} = await getData(`${BASE_API}list_movies.json?genre=drama`);
-  const {data:{movies: animationList}} = await getData(`${BASE_API}list_movies.json?genre=animation`);
-
   const $animationContainer = document.getElementById('animation');
   const $actionContainer = document.getElementById('action');
   const $dramaContainer = document.getElementById('drama');
@@ -85,6 +81,52 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $featuringContainer = document.getElementById('featuring');
   const $form = document.getElementById('form');
   const $home = document.getElementById('home');
+
+   // Templates in JS.
+   function videoItemTemplate(item, category){
+    return (
+      `<div class="primaryPlaylistItem" data-id="${item.id}" data-category="${category}">
+        <div class="primaryPlaylistItem-image">
+          <img src="${item.medium_cover_image}" />
+        </div>
+          <h4 class="primaryPlaylistItem-title">${item.title}</h4>
+      </div>`
+    )
+  }
+  
+  function createTemplate(HTMLString){
+    const html = document.implementation.createHTMLDocument();
+    html.body.innerHTML = HTMLString;
+    return html.body.children[0];
+  }
+  
+  function addEventClick($element){
+    $element.addEventListener('click', () => showModal($element));
+  }
+  
+  function renderMovieList(list, $container, category){
+      $container.children[0].remove();
+      list.forEach((item) =>{
+      const HTMLString = videoItemTemplate(item, category);
+      const movieElement = createTemplate(HTMLString);
+      const image = movieElement.querySelector('img');
+      $container.append(movieElement);
+      image.addEventListener('load', (event) => event.target.classList.add('fadeIn'));
+      addEventClick(movieElement);
+      //console.log(HTMLString)
+    })
+  }
+
+  const {data:{movies: actionList}} = await getData(`${BASE_API}list_movies.json?genre=action`);
+  renderMovieList(actionList, $actionContainer, 'action');
+  
+  const {data:{movies: dramaList}} = await getData(`${BASE_API}list_movies.json?genre=drama`);
+  renderMovieList(dramaList, $dramaContainer, 'drama');
+  
+  const {data:{movies: animationList}} = await getData(`${BASE_API}list_movies.json?genre=animation`);
+  renderMovieList(animationList, $animationContainer, 'animation');
+
+
 
   function featuringTemplate(movieData){
     return(
@@ -136,38 +178,7 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $modalImg = $modal.querySelector('img');
   const $modalDescription = $modal.querySelector('p');
 
-    // Templates in JS.
-function videoItemTemplate(item, category){
-  return (
-    `<div class="primaryPlaylistItem" data-id="${item.id}" data-category="${category}">
-      <div class="primaryPlaylistItem-image">
-        <img src="${item.medium_cover_image}" />
-      </div>
-        <h4 class="primaryPlaylistItem-title">${item.title}</h4>
-    </div>`
-  )
-}
-
-function createTemplate(HTMLString){
-  const html = document.implementation.createHTMLDocument();
-  html.body.innerHTML = HTMLString;
-  return html.body.children[0];
-}
-
-function addEventClick($element){
-  $element.addEventListener('click', () => showModal($element));
-}
-
-function renderMovieList(list, $container, category){
-    $container.children[0].remove();
-    list.forEach((item) =>{
-    const HTMLString = videoItemTemplate(item, category);
-    const movieElement = createTemplate(HTMLString); 
-    $container.append(movieElement);
-    addEventClick(movieElement);
-    //console.log(HTMLString)
-  })
-}
+ 
 
 function findById(list, id){
   return list.find( item => item.id === parseInt(id, 10));
@@ -203,12 +214,6 @@ $hideModal.addEventListener('click', () => {
   $overlay.classList.remove('active');
   $modal.style.animation = 'modalOut .8s forwards';
 })
-
-
-renderMovieList(actionList, $actionContainer, 'action');
-renderMovieList(dramaList, $dramaContainer, 'drama');
-renderMovieList(animationList, $animationContainer, 'animation');
-
 
   // console.log(videoItemTemplate('src/images/covers/bitcoin.jpg', 'Bitcoin'));
   /*
