@@ -119,11 +119,16 @@ fetch('https://randomuser.me/api/').then(function(response){
       height: 50 
     });
     $featuringContainer.append($loader);
-    
+
 // Making a Petition to API to search a movie
     const data = new FormData($form);
-    const movieData = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`);
-    const HTMLString = featuringTemplate(movieData.data.movies[0]);
+    // destructuring assignment
+    const {
+      data:{
+        movies: movieData
+      }
+    } = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`);
+    const HTMLString = featuringTemplate(movieData[0]);
     $featuringContainer.innerHTML = HTMLString;
   });
 
@@ -132,9 +137,9 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $modalDescription = $modal.querySelector('p');
 
     // Templates in JS.
-function videoItemTemplate(item){
+function videoItemTemplate(item, category){
   return (
-    `<div class="primaryPlaylistItem">
+    `<div class="primaryPlaylistItem" data-id="${item.id}" data-category="${category}">
       <div class="primaryPlaylistItem-image">
         <img src="${item.medium_cover_image}" />
       </div>
@@ -150,13 +155,13 @@ function createTemplate(HTMLString){
 }
 
 function addEventClick($element){
-  $element.addEventListener('click', () => showModal());
+  $element.addEventListener('click', () => showModal($element));
 }
 
-function renderMovieList(list, $container){
+function renderMovieList(list, $container, category){
     $container.children[0].remove();
     list.forEach((item) =>{
-    const HTMLString = videoItemTemplate(item);
+    const HTMLString = videoItemTemplate(item, category);
     const movieElement = createTemplate(HTMLString); 
     $container.append(movieElement);
     addEventClick(movieElement);
@@ -164,9 +169,11 @@ function renderMovieList(list, $container){
   })
 }
 
-function showModal(){
+function showModal($element){
   $overlay.classList.add('active');
   $modal.style.animation = 'modalIn .8s forwards';
+  const id = $element.dataset.id;
+  const category = $element.dataset.category;
 }
 
 $hideModal.addEventListener('click', () => {
@@ -176,9 +183,9 @@ $hideModal.addEventListener('click', () => {
 
 const kindList = (kList) => kList = kList.data.movies;
 
-renderMovieList(kindList(actionList), $actionContainer);
-renderMovieList(kindList(dramaList), $dramaContainer);
-renderMovieList(kindList(animationList), $animationContainer);
+renderMovieList(kindList(actionList), $actionContainer, 'action');
+renderMovieList(kindList(dramaList), $dramaContainer, 'drama');
+renderMovieList(kindList(animationList), $animationContainer, 'animation');
 
 
   // console.log(videoItemTemplate('src/images/covers/bitcoin.jpg', 'Bitcoin'));
