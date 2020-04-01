@@ -80,13 +80,27 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $overlay = document.getElementById('overlay');
   const $hideModal = document.getElementById('hide-modal');
 
-  const $featuringContainer = document.getElementById('feauting');
+  const $featuringContainer = document.getElementById('featuring');
   const $form = document.getElementById('form');
   const $home = document.getElementById('home');
+
+  function setAttributes($element, attributes){
+    for (const key in attributes){
+      $element.setAttribute(key, attributes[key]);
+    }
+  }
 
   $form.addEventListener('submit', (event) => {
     event.preventDefault();
     $home.classList.add('search-active');
+
+    const $loader = document.createElement('img');
+    setAttributes($loader, {
+      src: 'src/images/loader.gif',
+      width: 50,
+      height: 50 
+    });
+    $featuringContainer.append($loader);
   });
 
   const $modalTitle = $modal.querySelector('h1');
