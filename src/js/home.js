@@ -69,9 +69,11 @@ fetch('https://randomuser.me/api/').then(function(response){
     const data = await response.json();
     return data;
   }
-  const actionList = await getData('https://yts.mx/api/v2/list_movies.json?genre=action');
-  const dramaList = await getData('https://yts.mx/api/v2/list_movies.json?genre=drama');
-  const animationList = await getData('https://yts.mx/api/v2/list_movies.json?genre=animation');
+  const BASE_API = 'https://yts.mx/api/v2/';
+
+  const actionList = await getData(`${BASE_API}list_movies.json?genre=action`);
+  const dramaList = await getData(`${BASE_API}list_movies.json?genre=drama`);
+  const animationList = await getData(`${BASE_API}list_movies.json?genre=animation`);
 
   const $animationContainer = document.getElementById('animation');
   const $actionContainer = document.getElementById('action');
@@ -84,13 +86,29 @@ fetch('https://randomuser.me/api/').then(function(response){
   const $form = document.getElementById('form');
   const $home = document.getElementById('home');
 
+  function featuringTemplate(movieData){
+    return(
+      `
+      <div class="featuring">
+        <div class="featuring-image">
+          <img src="${movieData.medium_cover_image}"  width="70" />
+        </div>
+        <div class="featuring-content">
+          <p class="featuring-title">Pelicula encontrada</p>
+          <p class="featuring-album">${movieData.title}</p>
+        </div>
+      </div>
+      `
+    )
+  }
+
   function setAttributes($element, attributes){
     for (const key in attributes){
       $element.setAttribute(key, attributes[key]);
     }
   }
 
-  $form.addEventListener('submit', (event) => {
+  $form.addEventListener('submit', async (event) => {
     event.preventDefault();
     $home.classList.add('search-active');
 
@@ -101,6 +119,12 @@ fetch('https://randomuser.me/api/').then(function(response){
       height: 50 
     });
     $featuringContainer.append($loader);
+    
+// Making a Petition to API to search a movie
+    const data = new FormData($form);
+    const movieData = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`);
+    const HTMLString = featuringTemplate(movieData.data.movies[0]);
+    $featuringContainer.innerHTML = HTMLString;
   });
 
   const $modalTitle = $modal.querySelector('h1');
