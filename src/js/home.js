@@ -1,14 +1,50 @@
-console.log('Hello World!');
-const notChange = 'Wandy';
+// Adding playlists elements from the API to the DOM.
+(async function loadingPlayLists(){
+const $playlist = document.getElementById('playlist');
+  
+async function getUsersData(url){
+    const response = await fetch(url);
+    const user = await response.json();
+    return user;
+  }
 
-let change = "@sntwandy"
+  // My Users Array
+  const {results: usersList} = await getUsersData('https://randomuser.me/api/?results=8');
 
-function changeName(newName) {
-  change = newName
-}
+  // Creating HTML String Template
+  function playListTemplate(user){
+    return (
+      `<li class="playlistFriends-item">
+          <a href="#">
+            <img src="${user.picture.thumbnail}" alt="echame la culpa" />
+            <span>${user.name.first} ${user.name.last}</span>
+            </a>
+        </li>`
+    )
+  }
+
+// Creating the HTML Template with the HTML String
+  function playListHTMLTemplate(HTMLString){
+    const html = document.implementation.createHTMLDocument();
+    html.body.innerHTML = HTMLString;
+    return html.body.children[0]
+  }
+
+// Adding the HTML Template to the DOM.
+  function addingListUsers(users){
+    for(let i = 0; i < users.length; i++){
+      const HTMLString = playListTemplate(users[i])
+      const HTMLTemplate = playListHTMLTemplate(HTMLString);
+      $playlist.append(HTMLTemplate);
+    }
+  }
+
+  // Calling the Fn to add playlist element from API.
+  addingListUsers(usersList)
+})()
+
 
 // Promises
-
 const getUsers = new Promise(function(resolve, reject){
   setTimeout(function(){
     resolve('Everything is OK')
