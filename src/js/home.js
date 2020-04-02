@@ -157,12 +157,15 @@ fetch('https://randomuser.me/api/').then(function(response){
   }
 
   const {data:{movies: actionList}} = await getData(`${BASE_API}list_movies.json?genre=action`);
+  window.localStorage.setItem('actionList' ,JSON.stringify(actionList));
   renderMovieList(actionList, $actionContainer, 'action');
   
   const {data:{movies: dramaList}} = await getData(`${BASE_API}list_movies.json?genre=drama`);
+  window.localStorage.setItem('dramaList' ,JSON.stringify(dramaList));
   renderMovieList(dramaList, $dramaContainer, 'drama');
   
   const {data:{movies: animationList}} = await getData(`${BASE_API}list_movies.json?genre=animation`);
+  window.localStorage.setItem('animationList' ,JSON.stringify(animationList));
   renderMovieList(animationList, $animationContainer, 'animation');
 
 
